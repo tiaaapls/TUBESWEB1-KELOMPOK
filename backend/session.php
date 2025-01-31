@@ -3,19 +3,45 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 include 'koneksi/config.php';
 
-$session_token = $_POST['session_token'] ?? null;
+function validateSession() {
+    global $database_connection;
+    
+    $session_token = $_POST['session_token'] ?? null;
+    if (empty($session_token)) {
+        echo json_encode(['status' => 'error', 'message' => 'Session token diperlukan']);
+        exit();
+    }
 
-if (!empty($session_token)) {
-    $statement = $database_connection->prepare("SELECT nama_lengkap FROM users WHERE session_token = ?");
+    // Mengecek validasi session token
+    $statement = $database_connection->prepare("SELECT id FROM users WHERE session_token = ?");
     $statement->execute([$session_token]);
     $user = $statement->fetch();
 
-    if ($user) {
-        echo json_encode(['status' => 'success', 'hasil' => $user]);
-    } else {
+    if (!$user) {
         echo json_encode(['status' => 'error', 'message' => 'Session tidak valid']);
+        exit();
     }
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+
+    return $user['id'];
+}
+
+function validateSessionFromToken($session_token) {
+    global $database_connection;
+
+    if (empty($session_token)) {
+        return null;
+    }
+
+    // Mengecek validasi session token
+    $statement = $database_connection->prepare("SELECT id FROM users WHERE session_token = ?");
+    $statement->execute([$session_token]);
+    $user = $statement->fetch();
+
+    return $user ? $user['id'] : null; // Mengembalikan user_id jika token valid
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['session_token'])) {
+    $user_id = validateSession();
+    echo json_encode(['status' => 'success', 'user_id' => $user_id]);
 }
 ?>

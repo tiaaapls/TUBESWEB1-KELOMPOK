@@ -4,18 +4,27 @@ header("Content-Type: application/json");
 include 'koneksi/config.php';
 include 'session.php';
 
-// Validate session
-$user_id = validateSession();
+// Ambil session_token dari header Authorization
+$headers = getallheaders();
+$session_token = null;
+
+// Cek apakah token ada di header Authorization
+if (isset($headers['Authorization'])) {
+    $session_token = trim(str_replace('Bearer', '', $headers['Authorization']));
+}
+
+// Validasi session token
+$user_id = validateSessionFromToken($session_token);
 if (!$user_id) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit();
 }
 
-// Get DELETE data
-$data = json_decode(file_get_contents('php://input'), true);
+// Ambil data dari body request (x-www-form-urlencoded)
+$data = $_POST;
 
-// Validate input
+// Validasi input
 if (!isset($data['id'])) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'ID tugas tidak diberikan']);
@@ -23,10 +32,10 @@ if (!isset($data['id'])) {
 }
 
 try {
-    // Prepare SQL statement to delete task
+    // Persiapkan statement SQL untuk menghapus tugas
     $stmt = $database_connection->prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?");
-    
-    // Execute the statement
+
+    // Eksekusi statement
     $result = $stmt->execute([
         $data['id'], 
         $user_id
