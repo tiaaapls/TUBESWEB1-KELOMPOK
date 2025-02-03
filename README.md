@@ -115,12 +115,12 @@ Authorization: Bearer {token}
 ```
 
 **Parameter:**
-Nama      + Tipe    + Deskripsi
-----------+---------+------------------------------
-judul     + string  + Judul Tugas
-deskripsi + string  + Deskripsi tugas
-status    + string  + Status tugas (default: belum selesai)
-deadline  + date    + Deadline tugas (format YYYY-MM-DD)
+| Nama       | Tipe    | Deskripsi                              |
+|------------|---------|----------------------------------------|
+| judul      | string  | Judul Tugas                            |
+| deskripsi  | string  | Deskripsi tugas                        |
+| status     | string  | Status tugas (default: belum selesai)  |
+| deadline   | date    | Deadline tugas (format YYYY-MM-DD)     |
 
 **Respon Sukses:**
 ```
