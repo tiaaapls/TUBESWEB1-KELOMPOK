@@ -8,16 +8,27 @@ include 'koneksi/config.php';
 include 'session.php';
 
 // Validasi session dan mendapatkan user_id
-$user_id = validateSession();
+$headers = getallheaders();
+$session_token = null;
+
+// Cek apakah token ada di header Authorization
+if (isset($headers['Authorization'])) {
+    $session_token = trim(str_replace('Bearer', '', $headers['Authorization']));
+} else {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Authorization token tidak ditemukan']);
+    exit();
+}
+
+// Validasi session token dan ambil user_id
+$user_id = validateSessionFromToken($session_token);  // Pastikan fungsi ini memvalidasi token dan mengembalikan user_id
 if (!$user_id) {
+    http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit();
 }
 
-$data = json_decode(file_get_contents("php://input"), true);
-if (!$data) {
-    $data = $_POST;
-}
+$data = $_POST;
 
 // Mengambil nilai dari input
 $judul = $data['judul'] ?? null;
