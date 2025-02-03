@@ -103,4 +103,61 @@
 }
 ```
 
-## CRUD API
+## CRUD API MANAGEMENT
+### 1. Tambah Tugas
+**URL:** /add.php
+
+**Metode:** POST
+
+**Header yang Dibutuhkan:** 
+```
+Authorization: Bearer {token}
+```
+
+**Parameter:**
+Nama      + Tipe    + Deskripsi
+----------+---------+------------------------------
+judul     + string  + Judul Tugas
+deskripsi + string  + Deskripsi tugas
+status    + string  + Status tugas (default: belum selesai)
+deadline  + date    + Deadline tugas (format YYYY-MM-DD)
+
+**Respon Sukses:**
+```
+{
+  "status": "success",
+  "message": "Tugas berhasil ditambahkan",
+  "id": 1
+}
+```
+
+### 2. Daftar Tugas
+
+**URL:** /list.php
+
+**Metode:** GET
+
+**Header yang Dibutuhkan:** 
+```
+Authorization: Bearer {token}
+```
+
+**Respon Sukses:**
+```
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "judul": "Belajar PHP",
+      "deskripsi": "Membuat API dengan PHP",
+      "status": "belum selesai",
+      "created_at": "2024-02-04",
+      "deadline": "2024-02-10"
+    }
+  ],
+  "total": 1
+}
+```
+
+3.3 Perbarui Tugas
