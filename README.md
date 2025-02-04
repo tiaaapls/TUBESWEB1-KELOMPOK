@@ -2,19 +2,21 @@
 
 ## USER AUTHENTICATION API
 ### 1. Registrasi
-**Endpoint:** **POST** /registrasi.php
+* **URL:** /registrasi.php
 
-**Parameter (Form Data):**
+* **Metode:** POST
 
-* nama_lengkap: Nama lengkap pengguna
+* **Parameter (Form Data):**
 
-* email: Alamat email pengguna
+    + nama_lengkap: Nama lengkap pengguna
+    
+    + email: Alamat email pengguna
+    
+    + user: Username pengguna
+    
+    + pwd: Password pengguna
 
-* user: Username pengguna
-
-* pwd: Password pengguna
-
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -22,7 +24,7 @@
 }
 ```
 
-**Respon Gagal:**
+* **Respon Gagal:**
 ```
 {
   "status": "error",
@@ -31,15 +33,17 @@
 ```
 
 ### 2. Login
-**Endpoint:** **POST** /login.php
+* **URL:** /login.php
 
-**Parameter (Form Data):**
+* **Metode:** POST
 
-* user: Username pengguna
+* **Parameter (Form Data):**
 
-* pwd: Password pengguna
+    + user: Username pengguna
+    
+    + pwd: Password pengguna
 
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -47,7 +51,7 @@
 }
 ```
 
-**Respon Gagal:**
+* **Respon Gagal:**
 ```
 {
   "status": "error",
@@ -56,14 +60,15 @@
 ```
 
 ### 3. Validasi Sesi
+* **URL:** /session.php
 
-**Endpoint:** **POST** /session.php
+* **Metode:** POST
 
-**Parameter (Form Data):**
+* **Parameter (Form Data):**
 
-* session_token: Token sesi pengguna
+    + session_token: Token sesi pengguna
 
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -71,7 +76,7 @@
 }
 ```
 
-**Respon Gagal:**
+* **Respon Gagal:**
 ```
 {
   "status": "error",
@@ -80,14 +85,15 @@
 ```
 
 ### 4. Logout Pengguna
+* **URL:** /logout.php
 
-**Endpoint:** **POST** /logout.php
+* **Metode:** POST
 
-**Parameter (Form Data):**
+* **Parameter (Form Data):**
 
-* session_token: Token sesi pengguna
+    + session_token: Token sesi pengguna
 
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -95,7 +101,7 @@
 }
 ```
 
-**Respon Gagal:**
+* **Respon Gagal:**
 ```
 {
   "status": "error",
@@ -105,16 +111,16 @@
 
 ## CRUD API MANAGEMENT
 ### 1. Tambah Tugas
-**URL:** /add.php
+* **URL:** /add.php
 
-**Metode:** POST
+* **Metode:** POST
 
-**Header yang Dibutuhkan:** 
+* **Header yang Dibutuhkan:** 
 ```
 Authorization: Bearer {token}
 ```
 
-**Parameter:**
+* **Parameter:**
 | Nama       | Tipe    | Deskripsi                              |
 |------------|---------|----------------------------------------|
 | judul      | string  | Judul Tugas                            |
@@ -122,7 +128,7 @@ Authorization: Bearer {token}
 | status     | string  | Status tugas (default: belum selesai)  |
 | deadline   | date    | Deadline tugas (format YYYY-MM-DD)     |
 
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -133,16 +139,16 @@ Authorization: Bearer {token}
 
 ### 2. Daftar Tugas
 
-**URL:** /list.php
+* **URL:** /list.php
 
-**Metode:** GET
+* **Metode:** GET
 
-**Header yang Dibutuhkan:** 
+* **Header yang Dibutuhkan:** 
 ```
 Authorization: Bearer {token}
 ```
 
-**Respon Sukses:**
+* **Respon Sukses:**
 ```
 {
   "status": "success",
@@ -160,4 +166,5 @@ Authorization: Bearer {token}
 }
 ```
 
-3.3 Perbarui Tugas
+### 3. Perbarui Tugas
+
