@@ -7,38 +7,58 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 include 'koneksi/config.php';
 include 'session.php';
 
-if (!isset($_POST['bulan'])) {
-    echo json_encode(['error' => 'Bulan parameter tidak ditemukan']);
-    exit;
+// Mengambil session_token dari header Authorization
+$headers = getallheaders();
+$session_token = $headers['Authorization'] ?? null;
+
+if (!$session_token) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Session token diperlukan']);
+    exit();
 }
 
-$bulan = $_POST['bulan']; // Mengambil bulan dari parameter POST
+// Validasi session dan mendapatkan user_id
+$user_id = validateSessionFromToken($session_token);
+if (!$user_id) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit();
+}
+
+// Validasi input bulan
+if (!isset($_POST['bulan'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Bulan parameter tidak ditemukan']);
+    exit();
+}
+
+$bulan = $_POST['bulan'];
 
 // Menentukan bulan dalam format numerik
 $bulan_map = [
-    'Januari' => 1,
-    'Februari' => 2,
-    'Maret' => 3,
+    'Januari' => 1, 
+    'Februari' => 2, 
+    'Maret' => 3, 
     'April' => 4,
-    'Mei' => 5,
-    'Juni' => 6,
-    'Juli' => 7,
+    'Mei' => 5, 
+    'Juni' => 6, 
+    'Juli' => 7, 
     'Agustus' => 8,
-    'September' => 9,
-    'Oktober' => 10,
-    'November' => 11,
+    'September' => 9, 
+    'Oktober' => 10, 
+    'November' => 11, 
     'Desember' => 12
 ];
 
-$bulan_numerik = isset($bulan_map[$bulan]) ? $bulan_map[$bulan] : null;
-
+$bulan_numerik = $bulan_map[$bulan] ?? null;
 if (!$bulan_numerik) {
+    http_response_code(400);
     echo json_encode(['error' => 'Bulan tidak valid']);
-    exit;
+    exit();
 }
 
 // Mendapatkan tahun saat ini jika tidak diberikan
-$tahun = isset($_POST['tahun']) ? $_POST['tahun'] : date('Y');  // Jika 'tahun' tidak diberikan, gunakan tahun sekarang
+$tahun = isset($_POST['tahun']) ? (int) $_POST['tahun'] : date('Y');
 
 // Query untuk menghitung jumlah tugas berdasarkan minggu dalam bulan tertentu
 $statement = $database_connection->prepare("
@@ -46,16 +66,14 @@ $statement = $database_connection->prepare("
         FLOOR((DAYOFMONTH(tasks.created_at) - 1) / 7) + 1 AS minggu,
         COALESCE(COUNT(tasks.id), 0) AS jumlah_tugas
     FROM tasks
-    WHERE MONTH(tasks.created_at) = ? AND YEAR(tasks.created_at) = ?
+    WHERE MONTH(tasks.created_at) = ? AND YEAR(tasks.created_at) = ? AND user_id = ?
     GROUP BY minggu
     ORDER BY minggu;
 ");
-$statement->execute([$bulan_numerik, date('Y')]);
+$statement->execute([$bulan_numerik, $tahun, $user_id]);
 
-$data = array();
-while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-    $data[] = $row;
-}
+$data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode($data);
+http_response_code(200);
+echo json_encode(['status' => 'success', 'data' => $data]);
 ?>
